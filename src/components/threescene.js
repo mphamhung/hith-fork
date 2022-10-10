@@ -43,7 +43,7 @@ export default function ThreeScene(props) {
         new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } )
     )
     scene.add (object)
-    for (let i = 0; i<200; i++) {
+    for (let i = 0; i<2; i++) {
         const object = new THREE.Mesh(
             new THREE.BoxGeometry(testData.height,testData.width,1), 
             new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testData.url),color: Math.random() * 0xffffff })
