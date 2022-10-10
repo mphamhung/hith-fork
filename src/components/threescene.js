@@ -22,6 +22,11 @@ export default function ThreeScene(props) {
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+    camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+    camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
+    camera.lookAt( scene.position );
+    
     renderer = new THREE.WebGLRenderer();
 
     renderer.setSize(window.innerWidth, window.innerHeight)
@@ -104,16 +109,17 @@ export default function ThreeScene(props) {
     const animate = function () {
         requestAnimationFrame(animate);
         
-        if (INTERSECTED == null) {
-            theta += 0.1;
+        // if (INTERSECTED == null) {
+        //     theta += 0.1;
 
-            camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-            camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-            camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
+        //     camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+        //     camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
+        //     camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
             camera.lookAt( scene.position );
 
             camera.updateMatrixWorld();
-        }
+            controls.update()
+        // }
         renderer.render(scene, camera)
     }
 
