@@ -1,4 +1,3 @@
-import { useState, useEffect, useRef } from "react";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
 
@@ -26,7 +25,7 @@ export default function ThreeScene(props) {
     camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
     camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
     camera.lookAt( scene.position );
-    
+
     renderer = new THREE.WebGLRenderer();
 
     renderer.setSize(window.innerWidth, window.innerHeight)
@@ -91,7 +90,7 @@ export default function ThreeScene(props) {
         const intersects = raycaster.intersectObjects( scene.children, false );
 
         if ( intersects.length > 0 ) {
-            if ( INTERSECTED != intersects[ 0 ].object ) {
+            if ( INTERSECTED !== intersects[ 0 ].object ) {
                 if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
                 INTERSECTED = intersects[ 0 ].object;
                 INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
