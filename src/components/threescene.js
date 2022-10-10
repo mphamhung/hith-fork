@@ -21,7 +21,7 @@ export default function ThreeScene(props) {
     var uuid_to_prompt = {}
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 29, 1000 );
     camera.position.z = -200
 
     renderer = new THREE.WebGLRenderer();
@@ -46,11 +46,10 @@ export default function ThreeScene(props) {
         )       
     scene.add(object)
     // useEffect(() => {
-        for (let i = 0; i<20; i++) {
+        for (let i = 0; i<200; i++) {
             const object = new THREE.Mesh(
                 new THREE.BoxGeometry(testData.height,testData.width,1), 
                 new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testData.url),
-                    // color: Math.random() * 0xffffff 
                 })
                 )       
     
