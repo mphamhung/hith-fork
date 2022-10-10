@@ -1,6 +1,5 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
-import { useEffect } from "react";
 import { Vector3 } from "three";
 
 
@@ -105,10 +104,8 @@ export default function ThreeScene(props) {
                 var offset = new THREE.Vector3().copy(INTERSECTED.position)
                 offset.normalize()
                 offset.multiplyScalar(30)
-                const newPos = offset.add(INTERSECTED.position)
-                console.log(camera.position)
-                console.log(newPos)
-                
+                offset.add(INTERSECTED.position)
+            
 
                 let steps = 15
                 INMOTION = {
@@ -147,12 +144,7 @@ export default function ThreeScene(props) {
             var offset = new THREE.Vector3().copy(INTERSECTED.position)
             offset.normalize()
             offset.multiplyScalar(30)
-            const newPos = INTERSECTED.position + offset
-            // let steps = Array(100).fill(Vector3).map((v,i)=> camera.position +  )
-            // console.log(steps)
-            for (let i = 0; i < 100; i ++) {
-                
-            }
+
             camera.position.set(INTERSECTED.position.x+offset.x,
                 INTERSECTED.position.y+offset.y,
                 INTERSECTED.position.z+offset.z) 

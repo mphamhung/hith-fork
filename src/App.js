@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import ThreeScene from './components/threescene';
 import TextBox from './components/textbox';
