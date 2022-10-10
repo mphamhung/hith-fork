@@ -1,11 +1,14 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
+import { useEffect } from "react";
+import { Vector3 } from "three";
 
 
 const testData = {
     height: 20,
     width: 40,
-    url: "img/test.png"
+    url: "img/test.png",
+    prompt: "THIS IS A TEST PROMPT"
 }
 export default function ThreeScene(props) {
 
@@ -13,18 +16,14 @@ export default function ThreeScene(props) {
 
     let INTERSECTED;
 
-    let theta = 0;
+    let INMOTION;
     const pointer = new THREE.Vector2();
-    var lastPos = new THREE.Vector3();
-    // const lastAng 
-    const radius = 100;
+
+    var uuid_to_prompt = {}
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-    camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-    camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
-    camera.lookAt( scene.position );
+    camera.position.z = -200
 
     renderer = new THREE.WebGLRenderer();
 
@@ -35,32 +34,42 @@ export default function ThreeScene(props) {
     const light = new THREE.HemisphereLight( 0xffffbb, 0x080820,1);
     scene.add(light)
 
+    const light2 = new THREE.HemisphereLight( 0xffffbb, 0x080820,1);
+    light2.position.set(0,-1,0)
+    scene.add(light2)
+
     const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enablePan = false;
     controls.update()
-
     const object = new THREE.Mesh(
-        new THREE.SphereGeometry(10,10,10 ),
-        new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } )
-    )
-    scene.add (object)
-    for (let i = 0; i<2; i++) {
-        const object = new THREE.Mesh(
-            new THREE.BoxGeometry(testData.height,testData.width,1), 
-            new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testData.url),color: Math.random() * 0xffffff })
-            )       
+        new THREE.SphereGeometry(5,5,5), 
+        new THREE.MeshLambertMaterial({color: Math.random() * 0xffffff })
+        )       
+    scene.add(object)
+    // useEffect(() => {
+        for (let i = 0; i<20; i++) {
+            const object = new THREE.Mesh(
+                new THREE.BoxGeometry(testData.height,testData.width,1), 
+                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testData.url),
+                    // color: Math.random() * 0xffffff 
+                })
+                )       
+    
+            object.position.x = Math.random() * 400 - 200; 
+            object.position.y = Math.random() * 400 - 200; 
+            object.position.z = Math.random() * 400 - 200; 
+            uuid_to_prompt[object.uuid] = testData.prompt
+            
+            object.lookAt(0,0,0)
+            // object.scale.x = Math.random() + 0.5;
+            // object.scale.y = Math.random() + 0.5;
+            // object.scale.z = Math.random() + 0.5;
+    
+            scene.add(object)
+        }
+    // }, [])
 
-        object.position.x = Math.random() * 800 - 400; 
-        object.position.y = Math.random() * 800 - 400; 
-        object.position.z = Math.random() * 800 - 400; 
-
-        object.lookAt(scene.position)   
-
-        object.scale.x = Math.random() + 0.5;
-        object.scale.y = Math.random() + 0.5;
-        object.scale.z = Math.random() + 0.5;
-
-        scene.add(object)
-    }
+    
     raycaster = new THREE.Raycaster();
 
     document.addEventListener( 'mousemove', onPointerMove );
@@ -86,36 +95,78 @@ export default function ThreeScene(props) {
 
     function onMouseClick(event) {
         raycaster.setFromCamera( pointer, camera );
-
         const intersects = raycaster.intersectObjects( scene.children, false );
 
         if ( intersects.length > 0 ) {
             if ( INTERSECTED !== intersects[ 0 ].object ) {
                 if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
                 INTERSECTED = intersects[ 0 ].object;
-                INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-                INTERSECTED.material.emissive.setHex( 0xff0000 );
 
-                lastPos = camera.position
-                console.log(lastPos)
+                var offset = new THREE.Vector3().copy(INTERSECTED.position)
+                offset.normalize()
+                offset.multiplyScalar(30)
+                const newPos = offset.add(INTERSECTED.position)
+                console.log(camera.position)
+                console.log(newPos)
+                
+
+                let steps = 15
+                INMOTION = {
+                    steps : steps,
+                    xsteps : Array(100).fill(undefined).map((_,i)=> camera.position.x + i*(offset.x-camera.position.x)/steps  ),
+                    ysteps:Array(100).fill(undefined).map((_,i)=> camera.position.y + i*(offset.y-camera.position.y)/steps  ),
+                    zsteps :Array(100).fill(undefined).map((_,i)=> camera.position.z + i*(offset.z-camera.position.z)/steps  ),
+                    currStep: 0
+                }
+                console.log(uuid_to_prompt[INTERSECTED.uuid])
+       
             }
         } else {
             if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
             INTERSECTED = null;
+            INMOTION = null
         }        
     }
 
     const animate = function () {
         requestAnimationFrame(animate);
         
-        // if (INTERSECTED == null) {
-        //     theta += 0.1;
+        scene.traverse(function(obj) {
+            let rotAxes = new Vector3(0,0,1)
+            let offset = obj.position.clone()
+            offset.cross(rotAxes)
+            offset.normalize()
+            
+            obj.position.x += offset.x
+            obj.position.y += offset.y
+            obj.position.z += offset.z
+            obj.lookAt(0,0,0)
+            }
+        )
+        if (INTERSECTED && !INMOTION) {
+            var offset = new THREE.Vector3().copy(INTERSECTED.position)
+            offset.normalize()
+            offset.multiplyScalar(30)
+            const newPos = INTERSECTED.position + offset
+            // let steps = Array(100).fill(Vector3).map((v,i)=> camera.position +  )
+            // console.log(steps)
+            for (let i = 0; i < 100; i ++) {
+                
+            }
+            camera.position.set(INTERSECTED.position.x+offset.x,
+                INTERSECTED.position.y+offset.y,
+                INTERSECTED.position.z+offset.z) 
 
-        //     camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-        //     camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-        //     camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
-            camera.lookAt( scene.position );
-
+            camera.rotation.set(0,0,0)
+        }
+        if (INMOTION){
+            camera.position.set(INMOTION.xsteps[INMOTION.currStep], INMOTION.ysteps[INMOTION.currStep], INMOTION.zsteps[INMOTION.currStep])
+            INMOTION.currStep += 1
+            if (INMOTION.currStep > INMOTION.steps) {
+                INMOTION = null
+            }
+            controls.update()
+        }
             camera.updateMatrixWorld();
             controls.update()
         // }
