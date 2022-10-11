@@ -1,8 +1,9 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
-import { Vector3 } from "three";
+import { RGBADepthPacking, Vector3 } from "three";
 import TextBox from './textbox';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Drawer } from "@mui/material";
 const testDatas = require("../data.json")
 
 const VIEW_DIST = 40
@@ -10,7 +11,8 @@ const VIEW_DIST = 40
 export default function ThreeScene(props) {
 
 
-    const [prompt, setPrompt] = useState('Prompt')
+    const [prompt, setPrompt] = useState(null)
+    useEffect(() => {
 
     let scene, camera, renderer, raycaster;
     let INTERSECTED;
@@ -45,7 +47,6 @@ export default function ThreeScene(props) {
         new THREE.MeshLambertMaterial({color: Math.random() * 0xffffff })
         )       
     scene.add(object)
-    // useEffect(() => {
         for (let i = 0; i<testDatas.length; i++) {
             const object = new THREE.Mesh(
                 new THREE.BoxGeometry(testDatas[i].width/10,testDatas[i].height/10,1), 
@@ -58,16 +59,11 @@ export default function ThreeScene(props) {
             object.position.z = Math.random() * 400 - 200; 
             uuid_to_prompt[object.uuid] = testDatas[i].prompt
             
-            object.lookAt(0,0,0)
-            // object.scale.x = Math.random() + 0.5;
-            // object.scale.y = Math.random() + 0.5;
-            // object.scale.z = Math.random() + 0.5;
-    
+            object.lookAt(0,0,0)    
             scene.add(object)
         }
-    // }, [])
+   
 
-    
     raycaster = new THREE.Raycaster();
 
     document.addEventListener( 'mousemove', onPointerMove );
@@ -133,7 +129,7 @@ export default function ThreeScene(props) {
                     currStep: 0
                 }
                 console.log(uuid_to_prompt[INTERSECTED.uuid])
-                // setPrompt(uuid_to_prompt[INTERSECTED.uuid])
+                setPrompt(uuid_to_prompt[INTERSECTED.uuid])
 
             }
         } else {
@@ -141,6 +137,7 @@ export default function ThreeScene(props) {
             INTERSECTED = null;
             INMOTION = null;
             onclicktmp = null;
+            setPrompt(null)
         }        
     }
 
@@ -186,8 +183,13 @@ export default function ThreeScene(props) {
 
     
     animate()
+     }, [])
     return (
-        <><TextBox label={prompt}></TextBox></>
+        <><TextBox label={prompt}></TextBox>
+        <Drawer BackdropProps={{style:{backgroundColor:"red", opacity:0}}} 
+                PaperProps={{style:{backgroundColor:"black", opacity:0.4, fontSize:40, color:"white"}}}
+                anchor='bottom' open={prompt!=null}>{prompt}
+        </Drawer></>
       );
 }
 
