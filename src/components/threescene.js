@@ -8,6 +8,23 @@ const testDatas = require("../data.json")
 
 const VIEW_DIST = 40
 // console.log(testDatas)
+
+function place(i) {
+    const iter = i + 350 * (-1)**i
+    return {x:iter*Math.cos(iter)*Math.sin(0.1*iter%360),
+            y:iter*Math.sin(0.1*iter%360)*Math.sin(0.1*iter%360), 
+            z:iter*Math.cos(iter)}
+}
+
+function place_helix(i) {
+    const a = 0.05
+    const c = 5.0
+
+    const t = i*5 * (-1)**i
+    return {x:(t%1000+300)*Math.sin(t),
+            y:(t%1000+300)*Math.cos(t) *Math.sin(t), 
+            z:t}
+}
 export default function ThreeScene(props) {
 
 
@@ -23,8 +40,9 @@ export default function ThreeScene(props) {
     var uuid_to_prompt = {}
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, VIEW_DIST-1, 1000 );
-    camera.position.z = -200
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, VIEW_DIST-1, 5000 );
+    camera.position.z = 10000
+    camera.lookAt(scene.position)
 
     renderer = new THREE.WebGLRenderer();
 
@@ -47,17 +65,24 @@ export default function ThreeScene(props) {
         new THREE.MeshLambertMaterial({color: Math.random() * 0xffffff })
         )       
     scene.add(object)
-        for (let i = 0; i<testDatas.length; i++) {
+        for (let i = 0; i<2000; i++) {
+            let j = i%testDatas.length
             const object = new THREE.Mesh(
-                new THREE.BoxGeometry(testDatas[i].width/10,testDatas[i].height/10,1), 
-                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testDatas[i].url),
+                new THREE.BoxGeometry(testDatas[j].width/10,testDatas[j].height/10,1), 
+                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testDatas[j].url),
                 })
                 )       
-    
-            object.position.x = Math.random() * 400 - 200; 
-            object.position.y = Math.random() * 400 - 200; 
-            object.position.z = Math.random() * 400 - 200; 
-            uuid_to_prompt[object.uuid] = testDatas[i].prompt
+            let pos = place_helix(i)
+            // console.log(pos)
+            // console.log(pos.x,pos.y,pos.z)
+            object.position.set(
+                pos.x+Math.random()*50-25, 
+                pos.y+Math.random()*50-25, 
+                pos.z+Math.random()*50-25)
+            // object.position.x = Math.random() * 400 - 200; 
+            // object.position.y = Math.random() * 400 - 200; 
+            // object.position.z = Math.random() * 400 - 200; 
+            uuid_to_prompt[object.uuid] = testDatas[j].prompt
             
             object.lookAt(0,0,0)    
             scene.add(object)
