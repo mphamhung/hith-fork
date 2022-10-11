@@ -1,15 +1,6 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
 import { Vector3 } from "three";
-import Box from '@mui/material/Box';
-
-
-const testData = {
-    height: 20,
-    width: 40,
-    url: "img/test.png",
-    prompt: "THIS IS A TEST PROMPT"
-}
 
 const testDatas = require("../data.json")
 
