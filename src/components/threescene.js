@@ -1,6 +1,6 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
-import { RGBADepthPacking, Vector3 } from "three";
+import { Vector3 } from "three";
 import TextBox from './textbox';
 import { useState, useEffect } from "react";
 import { Drawer } from "@mui/material";

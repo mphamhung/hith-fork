@@ -1,6 +1,5 @@
 import './App.css';
 import ThreeScene from './components/threescene';
-import TextBox from './components/textbox';
 function App() {
   return (
     <div className="App">
