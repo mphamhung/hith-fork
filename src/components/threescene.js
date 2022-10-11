@@ -15,6 +15,7 @@ export default function ThreeScene(props) {
     let scene, camera, renderer, raycaster;
     let INTERSECTED;
     let INMOTION;
+    let onclicktmp;
     const pointer = new THREE.Vector2();
 
     var uuid_to_prompt = {}
@@ -71,6 +72,7 @@ export default function ThreeScene(props) {
 
     document.addEventListener( 'mousemove', onPointerMove );
     document.addEventListener( 'click', onMouseClick );
+    document.addEventListener( 'mousedown', onMouseDown );
 
     window.addEventListener( 'resize', onWindowResize );
 
@@ -89,14 +91,31 @@ export default function ThreeScene(props) {
         renderer.setSize( window.innerWidth, window.innerHeight );
 
     }
+    function onMouseDown(event) {
+        if (onclicktmp) {
+            onclicktmp = null;
+        }
+        else{
+            raycaster.setFromCamera( pointer, camera );
+            const intersects = raycaster.intersectObjects( scene.children, false );
+    
+            if ( intersects.length > 0 ) {
+                if ( onclicktmp !== intersects[ 0 ].object ) {
+                    onclicktmp = intersects[ 0 ].object;
+                }
+            }
+        }
+        
+
+    }
 
     function onMouseClick(event) {
         raycaster.setFromCamera( pointer, camera );
         const intersects = raycaster.intersectObjects( scene.children, false );
 
         if ( intersects.length > 0 ) {
-            if ( INTERSECTED !== intersects[ 0 ].object ) {
-                if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+            if ( onclicktmp === intersects[ 0 ].object ) {
+                // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
                 INTERSECTED = intersects[ 0 ].object;
 
                 var offset = new THREE.Vector3().copy(INTERSECTED.position)
@@ -114,13 +133,14 @@ export default function ThreeScene(props) {
                     currStep: 0
                 }
                 console.log(uuid_to_prompt[INTERSECTED.uuid])
-                setPrompt(uuid_to_prompt[INTERSECTED.uuid])
+                // setPrompt(uuid_to_prompt[INTERSECTED.uuid])
 
             }
         } else {
             if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
             INTERSECTED = null;
-            INMOTION = null
+            INMOTION = null;
+            onclicktmp = null;
         }        
     }
 
