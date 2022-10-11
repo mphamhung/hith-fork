@@ -40,7 +40,7 @@ export default function ThreeScene(props) {
     var uuid_to_prompt = {}
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, VIEW_DIST-1, 5000 );
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, VIEW_DIST-1, 100000 );
     camera.position.z = 10000
     camera.lookAt(scene.position)
 
