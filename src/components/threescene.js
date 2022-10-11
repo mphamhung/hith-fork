@@ -1,12 +1,16 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
 import { Vector3 } from "three";
-
+import TextBox from './textbox';
+import { useState } from "react";
 const testDatas = require("../data.json")
 
 const VIEW_DIST = 40
 // console.log(testDatas)
 export default function ThreeScene(props) {
+
+
+    const [prompt, setPrompt] = useState('Prompt')
 
     let scene, camera, renderer, raycaster;
     let INTERSECTED;
@@ -16,7 +20,7 @@ export default function ThreeScene(props) {
     var uuid_to_prompt = {}
 
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 29, 1000 );
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, VIEW_DIST-1, 1000 );
     camera.position.z = -200
 
     renderer = new THREE.WebGLRenderer();
@@ -110,7 +114,8 @@ export default function ThreeScene(props) {
                     currStep: 0
                 }
                 console.log(uuid_to_prompt[INTERSECTED.uuid])
-       
+                setPrompt(uuid_to_prompt[INTERSECTED.uuid])
+
             }
         } else {
             if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
@@ -162,7 +167,7 @@ export default function ThreeScene(props) {
     
     animate()
     return (
-        <></>
+        <><TextBox label={prompt}></TextBox></>
       );
 }
 

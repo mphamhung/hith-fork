@@ -2,7 +2,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
-export default function TextBox() {
+export default function TextBox(props) {
+    const text = props.label
   return (
     <Box
       component="form"
@@ -16,7 +17,7 @@ export default function TextBox() {
       noValidate
       autoComplete="off"
     >
-      <TextField id="outlined-basic" label="Prompt" variant="outlined" />
+      <TextField id="outlined-basic" label={text} variant="outlined" />
     </Box>
   );
 }
