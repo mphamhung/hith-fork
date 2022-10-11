@@ -1,6 +1,7 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as THREE from "three";
 import { Vector3 } from "three";
+import Box from '@mui/material/Box';
 
 
 const testData = {
@@ -9,12 +10,15 @@ const testData = {
     url: "img/test.png",
     prompt: "THIS IS A TEST PROMPT"
 }
+
+const testDatas = require("../data.json")
+
+const VIEW_DIST = 40
+// console.log(testDatas)
 export default function ThreeScene(props) {
 
     let scene, camera, renderer, raycaster;
-
     let INTERSECTED;
-
     let INMOTION;
     const pointer = new THREE.Vector2();
 
@@ -46,17 +50,17 @@ export default function ThreeScene(props) {
         )       
     scene.add(object)
     // useEffect(() => {
-        for (let i = 0; i<200; i++) {
+        for (let i = 0; i<testDatas.length; i++) {
             const object = new THREE.Mesh(
-                new THREE.BoxGeometry(testData.height,testData.width,1), 
-                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testData.url),
+                new THREE.BoxGeometry(testDatas[i].width/10,testDatas[i].height/10,1), 
+                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load(testDatas[i].url),
                 })
                 )       
     
             object.position.x = Math.random() * 400 - 200; 
             object.position.y = Math.random() * 400 - 200; 
             object.position.z = Math.random() * 400 - 200; 
-            uuid_to_prompt[object.uuid] = testData.prompt
+            uuid_to_prompt[object.uuid] = testDatas[i].prompt
             
             object.lookAt(0,0,0)
             // object.scale.x = Math.random() + 0.5;
@@ -102,7 +106,7 @@ export default function ThreeScene(props) {
 
                 var offset = new THREE.Vector3().copy(INTERSECTED.position)
                 offset.normalize()
-                offset.multiplyScalar(30)
+                offset.multiplyScalar(VIEW_DIST)
                 offset.add(INTERSECTED.position)
             
 
@@ -142,7 +146,7 @@ export default function ThreeScene(props) {
         if (INTERSECTED && !INMOTION) {
             var offset = new THREE.Vector3().copy(INTERSECTED.position)
             offset.normalize()
-            offset.multiplyScalar(30)
+            offset.multiplyScalar(VIEW_DIST)
 
             camera.position.set(INTERSECTED.position.x+offset.x,
                 INTERSECTED.position.y+offset.y,
@@ -164,6 +168,7 @@ export default function ThreeScene(props) {
         renderer.render(scene, camera)
     }
 
+    
     animate()
     return (
         <></>
