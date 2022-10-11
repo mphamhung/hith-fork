@@ -110,7 +110,13 @@ export default function ThreeScene(props) {
         const intersects = raycaster.intersectObjects( scene.children, false );
 
         if ( intersects.length > 0 ) {
-            if ( onclicktmp === intersects[ 0 ].object ) {
+            if (INTERSECTED === intersects[ 0 ].object) {
+                INTERSECTED = null;
+                INMOTION = null;
+                onclicktmp = null;
+                setPrompt(null)
+            }
+            else if ( onclicktmp === intersects[ 0 ].object ) {
                 // if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
                 INTERSECTED = intersects[ 0 ].object;
 
