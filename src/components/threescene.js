@@ -9,17 +9,14 @@ const testDatas = require("../data.json")
 const VIEW_DIST = 40
 // console.log(testDatas)
 
-function place(i) {
-    const iter = i + 350 * (-1)**i
-    return {x:iter*Math.cos(iter)*Math.sin(0.1*iter%360),
-            y:iter*Math.sin(0.1*iter%360)*Math.sin(0.1*iter%360), 
-            z:iter*Math.cos(iter)}
-}
+// function place(i) {
+//     const iter = i + 350 * (-1)**i
+//     return {x:iter*Math.cos(iter)*Math.sin(0.1*iter%360),
+//             y:iter*Math.sin(0.1*iter%360)*Math.sin(0.1*iter%360), 
+//             z:iter*Math.cos(iter)}
+// }
 
 function place_helix(i) {
-    const a = 0.05
-    const c = 5.0
-
     const t = i*5 * (-1)**i
     return {x:(t%1000+300)*Math.sin(t),
             y:(t%1000+300)*Math.cos(t) *Math.sin(t), 
